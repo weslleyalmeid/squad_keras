@@ -1,0 +1,29 @@
+Identificar variáveis/atributos e tipos de dados.
+Númericas (discretas, contínuas) ou categóricas (ordinais, nominais).
+
+- Identificar as variáveis dependentes e independentes ou preditoras e variável alvo.
+
+- Análise de métricas básicas.
+Contagens, percentis, média, desvio padrão, valores máximos e mínimos.
+
+- Análise Univariada.
+Valores únicos, duplicados, valores faltantes, assimetria, distribuição, filtragens e condições.
+
+- Análise Univariada Gráfica.
+Distribuição (Histogramas), Identificação de Outliers: Box-plot e outras técnicas.
+
+- Análise Multivariada Gráfica.
+Dispersão (relação linear), gráficos de barras, pilha…
+
+- Transformação e limpeza de dados.
+Alteração de tipos de dados (realizar cálculos, concatenações, remoção de caracteres especiais etc.
+
+- Tratamento de Valores Faltantes (Missing Values)
+Preenchimento de valores (média, mediana, conhecimento local), exclusão de registros.
+
+- Análise/Tratamento de Outliers.
+Identificar ruídos, discrepâncias, anomalias, erros.
+
+- Análise de Correlação.
+
+- Redução de dimensionalidade.
