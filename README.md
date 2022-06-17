@@ -1,4 +1,4 @@
-Detecção de fraudes em cartão de crédito
+Detecção de fraude em cartão de crédito
 ==============================
 
 
