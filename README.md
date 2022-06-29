@@ -4,7 +4,7 @@ Detecção de fraude em cartão de crédito
 
 ## Preparar o ambiente
 
-**Clonando o repositório**
+**Clonar repositório**
 ```sh
 # ssh
 git clone git@github.com:weslleyalmeid/squad_keras.git
@@ -14,18 +14,20 @@ git clone https://github.com/weslleyalmeid/squad_keras.git
 ```
 
 Dentro da pasta que foi clonada *squad_keras* inicie a preparação do ambiente
+```
+cd squad_keras
+```
 
 **Criar e ativar ambiente virtual**
 ```sh
-# criar ambiente virtual
+# criar ambiente virtual python==3.9
 python -m venv .venv_keras
 
 # ativar ambiente virtual
 # unix
 source .venv_keras/bin/activate
 # windows
-.venve_keras/Scripts/activate
-
+.venv_keras/Scripts/activate
 ```
 
 **Instalar bibliotecas**
