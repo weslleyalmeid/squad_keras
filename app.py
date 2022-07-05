@@ -1,5 +1,17 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import os.path
+import pandas as pd
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODELS_DIR = os.path.join(ROOT_DIR, 'models')
+
+model = pd.read_pickle( os.path.join(MODELS_DIR, "model.pkl"))
+
+
+def predict_model(model, data):
+    pass
+
 
 st.set_page_config(page_title="Example App", page_icon="🤖")
 
@@ -19,6 +31,36 @@ if opt == 'Predict Only Data':
 
 elif opt == 'Predict List Data':
     file = st.file_uploader('Faça o upload do arquivo', type=['csv', 'xlsx'])
+    
+    if file is not None:
+        try:
+            df = pd.read_csv(file, usecols=model['features'])
+        except:
+            df = pd.read_excel(file, usecols=model['features'])
+
+        if st.checkbox('Informações do Dataset'):
+            st.markdown('Info')
+            aux = pd.DataFrame({'types': df.dtypes,
+                                'percentual_faltante': df.isna().mean()})
+
+            st.dataframe(aux.astype(str))
+            st.markdown('Shape')
+            st.write(df.shape)
+
+        if st.checkbox('Describe'):
+            st.markdown('Describe')
+            st.write(df.describe())
+
+        if st.checkbox('Gerar detecção'):
+            st.text('Modelo Random Forest')
+            df['class'] = model['model'].predict(df)
+
+            col = df.pop('class')
+            df.insert(0, col.name, col)
+
+            st.dataframe(df)
+    
+
 
 
 elif opt == 'Dashboard':
