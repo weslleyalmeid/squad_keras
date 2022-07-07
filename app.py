@@ -94,7 +94,7 @@ elif opt == 'Dashboard 2':
         avg_time = np.mean(df["time_new"])
 
         count_fraud_amount = int(
-            df[(df["class"] == 1)]["amount"].count() + np.random.choice(range(1, 5))
+            df[(df["class"] == job_filter)]["amount"].count() + np.random.choice(range(1, 5))
         )
 
         balance = np.mean(df["amount_new"])
@@ -112,7 +112,7 @@ elif opt == 'Dashboard 2':
             )
             
             kpi2.metric(
-                label="Fraud Count",
+                label="{act} Count".format(act = 'Fraud' if job_filter == 1 else 'Normal'),
                 value=int(count_fraud_amount),
                 delta=-10 + count_fraud_amount,
             )

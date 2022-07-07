@@ -76,6 +76,8 @@ endif
 test_environment:
 	$(PYTHON_INTERPRETER) test_environment.py
 
+activate_env:
+	source .venv_keras/bin/activate
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
