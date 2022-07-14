@@ -77,7 +77,7 @@ def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_tes
     with mlflow.start_run():
         name_registry = f'model_{model_name}'
         mlflow.sklearn.autolog(registered_model_name=name_registry)
-        model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=1, random_state=42, n_jobs=-1)
+        model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=2, random_state=42, n_jobs=-1)
 
         model.fit(X_train, y_train)
 

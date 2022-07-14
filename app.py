@@ -80,8 +80,6 @@ elif opt == 'Predict List Data':
 
                 model, features, name = ut.get_model(text=option.lower(), params=params)
 
-                ipdb.set_trace()
-
                 st.write(f'Modelo: {name}')
                 y_pred = model.predict(df[features])
                 y_pred_proba = model.predict_proba(df[features])
@@ -99,6 +97,15 @@ elif opt == 'Predict List Data':
                 df.insert(0, col.name, col)
 
                 st.dataframe(df)
+
+                st.download_button(
+                    label='Download Result',
+                    data=df.to_csv(index=False).encode('utf-8'),
+                    file_name='result.csv',
+                    mime='text/csv"',
+                    key='download-csv'
+                )
+
     
 
 elif opt == 'KPIs':
