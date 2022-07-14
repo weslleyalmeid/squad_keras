@@ -20,7 +20,6 @@ class Utils():
         self.engine = create_engine(f'sqlite://{self.DB_DIR}', echo=False)
 
     def _save_db(self, df):
-        ipdb.set_trace()
         print('estou em save')
         try:
             df.to_sql('data_stream', con=self.engine, if_exists='append')
@@ -46,7 +45,10 @@ class Utils():
         if 'local' in text:
             name = 'Local'
             model = pd.read_pickle( os.path.join(self.MODELS_DIR, "modelRF.pkl") )
-            return model['model'], model['features'].str.lower(), name
+            features = model['features'].str.lower()
+            model = model['model']
+
+            return model, features, name
 
 
         elif 'mlflow' in text:
@@ -58,7 +60,8 @@ class Utils():
             client = mlflow.tracking.MlflowClient(tracking_uri=uri)
             model_production = client.get_latest_versions(name=name_registry, stages=['production'])[0]
             model = mlflow.sklearn.load_model(model_production.source)
-            ipdb.set_trace()
-            return model, model.feature_names_in_, name
+            features = model.feature_names_in_
+        
+            return model, features, name
 
         
