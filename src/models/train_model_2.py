@@ -41,32 +41,27 @@ def initial_data(foldername:str, filename:str) -> pd.DataFrame:
     return X_res, X_test, y_res, y_test
 
 def upgrade_stage(roc_auc, recall, f1, uri, name_registry, name_experiment):
-    # pegar uri, name e name_experimento na main
-    # ipdb.set_trace()
+    
     # aqui pega o modelo ja no tracking
     client = mlflow.tracking.MlflowClient(tracking_uri=uri)
-    # ipdb.set_trace()
+
     # pegar o id do experimento por nome do projeto
     id_experiment = client.get_experiment_by_name(name_experiment).experiment_id
-    # ipdb.set_trace()
+
 
     for mv in client.search_model_versions(f"name='{name_registry}'"):
 
-        # ipdb.set_trace()
-
         if mv.current_stage == 'Production':
-            ipdb.set_trace()
             # pegar o id de execucao do experimento que esta em producao
             id_run = mv.run_id
+            
             # runs vai receber um dataframe com os valores do experimento para todos os experimentos
             runs = mlflow.search_runs(experiment_ids=id_experiment)
             df_experiment = runs[runs['run_id'] == id_run]         
 
-            ipdb.set_trace()
             roc_auc_old = float(df_experiment['metrics.roc_auc'].values)
             recall_old = float(df_experiment['metrics.recall'].values)
             f1_old = float(df_experiment['metrics.f1_score'].values)
-            ipdb.set_trace()
 
             if roc_auc > roc_auc_old and recall > recall_old and f1 > f1_old:
                 return 'Production'
@@ -82,7 +77,7 @@ def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_tes
     with mlflow.start_run():
         name_registry = f'model_{model_name}'
         mlflow.sklearn.autolog(registered_model_name=name_registry)
-        model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=2, random_state=42, n_jobs=3)
+        model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=1, random_state=42, n_jobs=-1)
 
         model.fit(X_train, y_train)
 

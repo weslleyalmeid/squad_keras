@@ -45,7 +45,7 @@ class Utils():
 
         if 'local' in text:
             name = 'Local'
-            model = pd.read_pickle( os.path.join(MODELS_DIR, "modelRF.pkl") )
+            model = pd.read_pickle( os.path.join(self.MODELS_DIR, "modelRF.pkl") )
             return model['model'], model['features'].str.lower(), name
 
 
