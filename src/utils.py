@@ -23,7 +23,7 @@ class Utils():
         print('estou em save')
         ipdb.set_trace
         try:
-            df.to_sql('data_stream', con=self.engine, if_exists='append')
+            df.to_sql('data_stream', con=self.engine, if_exists='append', index=False)
             print('sucess')
         except:
             print('error')
