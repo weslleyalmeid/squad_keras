@@ -98,6 +98,9 @@ elif opt == 'Predict List Data':
 
                 st.dataframe(df)
 
+                df['Model'] = name
+                ut.save_db(df)
+
                 st.download_button(
                     label='Download Result',
                     data=df.to_csv(index=False).encode('utf-8'),

@@ -17,10 +17,11 @@ class Utils():
         self.DATA_DIR = os.path.join(self.ROOT_DIR, 'data', '{folder}')
         self.DB_DIR = os.path.join(self.DATA_DIR.format(folder='interim'), 'tmp.db')
 
-        self.engine = create_engine(f'sqlite://{self.DB_DIR}', echo=False)
+        self.engine = create_engine(f'sqlite:///{self.DB_DIR}', echo=False)
 
-    def _save_db(self, df):
+    def save_db(self, df):
         print('estou em save')
+        ipdb.set_trace
         try:
             df.to_sql('data_stream', con=self.engine, if_exists='append')
             print('sucess')
@@ -31,13 +32,11 @@ class Utils():
         try:
             df = pd.read_csv(file)
             df.columns = df.columns.str.lower()
-            self._save_db(df)
             return df
 
         except:
             df = pd.read_excel(file)
             df.columns = df.columns.str.lower()
-            self._save_db(df)
             return df
 
     def get_model(self, text:str, params:dict):
