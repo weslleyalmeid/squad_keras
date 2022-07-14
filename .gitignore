@@ -4,6 +4,7 @@
 
 ### Ignore personalizado ###
 data/
+mlruns/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

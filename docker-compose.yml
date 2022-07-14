@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  mlflow:
+    build: .
+    command: "mlflow server \
+            --backend-store-uri sqlite:///mlruns/mlflow.db \
+            --default-artifact-root ./mlruns/artifacts \
+            --host 0.0.0.0"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns  # mlflow reads from mlruns
