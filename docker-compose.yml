@@ -2,6 +2,8 @@ version: "3.7"
 services:
   mlflow:
     build: .
+    image: mlflow
+    container_name: mlflow
     command: "mlflow server \
             --backend-store-uri sqlite:///mlruns/mlflow.db \
             --default-artifact-root ./mlruns/artifacts \
@@ -10,3 +12,13 @@ services:
       - "5000:5000"
     volumes:
       - ./mlruns:/mlruns  # mlflow reads from mlruns
+
+  streamlit:
+    build: .
+    image: streamlit 
+    container_name: streamlit
+    command: "streamlit run /streamlit/app.py"
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/streamlit/data  # mlflow reads from mlruns
