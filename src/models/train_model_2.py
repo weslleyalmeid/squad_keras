@@ -3,7 +3,6 @@ import os.path
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from imblearn.over_sampling import SMOTE
-import pickle
 from sklearn.metrics import roc_auc_score, recall_score, f1_score
 import mlflow
 import ipdb
@@ -70,38 +69,6 @@ def upgrade_stage(roc_auc, recall, f1, uri, name_registry, name_experiment):
         
     return 'Production'
 
-def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_test, y_train, y_test):
-    mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment(name_experiment)
-
-    with mlflow.start_run():
-        name_registry = f'model_{model_name}'
-        mlflow.sklearn.autolog(registered_model_name=name_registry)
-        model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=2, random_state=42, n_jobs=-1)
-
-        model.fit(X_train, y_train)
-
-        y_pred = model.predict(X_test)
-        # ipdb.set_trace()
-        roc_auc = roc_auc_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
-
-        mlflow.log_metric('roc_auc', roc_auc)
-        mlflow.log_metric('recall', recall)
-        mlflow.log_metric('f1_score', f1)
-
-
-        signature = infer_signature(X_test, y_pred)
-        mlflow.sklearn.log_model(
-            sk_model=model,
-            artifact_path=name_registry,
-            registered_model_name=name_registry,
-            signature=signature,
-        )
-
-        return roc_auc, recall, f1, name_registry
-
 
 def model_registry(roc_auc, recall, f1, name_registry, name_experiment):
     # ipdb.set_trace()
@@ -124,6 +91,45 @@ def model_registry(roc_auc, recall, f1, name_registry, name_experiment):
         return 'Model in Production'
 
     return 'Refused model in Production'
+
+def train_model(X_train, y_train):
+    model = RandomForestClassifier(max_depth=4, min_samples_leaf=3, verbose=2, random_state=42, n_jobs=-1)
+    model.fit(X_train, y_train)
+    return model
+
+
+def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_test, y_train, y_test):
+    mlflow.set_tracking_uri(uri)
+    mlflow.set_experiment(name_experiment)
+
+    with mlflow.start_run():
+        name_registry = f'model_{model_name}'
+        mlflow.sklearn.autolog(registered_model_name=name_registry)
+        
+        
+        model = train_model(X_train, y_train)
+
+        y_pred = model.predict(X_test)
+        # ipdb.set_trace()
+        roc_auc = roc_auc_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+
+        mlflow.log_metric('roc_auc', roc_auc)
+        mlflow.log_metric('recall', recall)
+        mlflow.log_metric('f1_score', f1)
+
+
+        signature = infer_signature(X_test, y_pred)
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path=name_registry,
+            registered_model_name=name_registry,
+            signature=signature,
+        )
+
+        return roc_auc, recall, f1, name_registry
+
 
 if __name__ == '__main__':
 

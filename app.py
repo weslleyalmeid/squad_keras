@@ -37,6 +37,11 @@ if opt == 'Sobre':
     number = st.number_input('Page number', min_value=1, max_value=3)
     if number == 1:
         st.write('The current number is ', number)
+        st.title('title')
+        st.subheader('subheader')
+        st.write('write')
+        st.markdown('markdown')
+
     elif number == 2:
         st.write('The current number is ', number)
     elif number == 3:
@@ -165,7 +170,8 @@ elif opt == 'KPIs':
             with fig_col2:
                 st.markdown("### Second Chart")
                 fig2 = px.histogram(data_frame=df, x="amount_new", width=500, height=300)
-                st.write(fig2)
+                # st.write(fig2)
+                st.pyplot()
 
             st.markdown("### Detailed Data View")
             st.dataframe(df)

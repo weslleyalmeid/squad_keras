@@ -3,8 +3,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,virtualenv,visualstudiocode
 
 ### Ignore personalizado ###
-data/
-mlruns/
+data/*
+mlruns/*
+secrets/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
