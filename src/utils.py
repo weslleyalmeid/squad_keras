@@ -15,7 +15,7 @@ class Utils():
         self.ROOT_DIR = os.path.dirname(self.SRC_DIR)
         self.MODELS_DIR = os.path.join( self.ROOT_DIR, 'models')
         self.DATA_DIR = os.path.join(self.ROOT_DIR, 'data', '{folder}')
-        self.DB_DIR = os.path.join(self.DATA_DIR.format(folder='interim'), 'tmp.db')
+        self.DB_DIR = os.path.join(self.DATA_DIR.format(folder='interim'), 'predict.db')
 
         self.engine = create_engine(f'sqlite:///{self.DB_DIR}', echo=False)
 
@@ -63,4 +63,6 @@ class Utils():
         
             return model, features, name
 
+    def get_data_predict(self):
+        return pd.read_sql(sql='SELECT * FROM data_stream', con=self.engine)
         

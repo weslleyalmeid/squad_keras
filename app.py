@@ -1,12 +1,13 @@
-import streamlit as st
-import streamlit.components.v1 as components
 import os.path
-import pandas as pd
-import numpy as np
 import time
-import plotly.express as px
+from datetime import datetime
+
 import ipdb
-import mlflow
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+
 from src.utils import Utils
 
 ut = Utils()
@@ -104,12 +105,16 @@ elif opt == 'Predict List Data':
                 st.dataframe(df)
 
                 df['Model'] = name
+
+                dt = datetime.today().date()
+                df['dt_arquivo'] = dt
+
                 ut.save_db(df)
 
                 st.download_button(
                     label='Download Result',
                     data=df.to_csv(index=False).encode('utf-8'),
-                    file_name='result.csv',
+                    file_name=f'result_{dt}.csv',
                     mime='text/csv"',
                     key='download-csv'
                 )
@@ -118,64 +123,92 @@ elif opt == 'Predict List Data':
 
 elif opt == 'KPIs':
 
-    job_filter = st.selectbox("Select the Job", pd.unique(df["class"]))
+    st.title('Métricas de Monitoramento')
+
+    st.markdown('Selecione um intervalo:')
+    col1, col2 = st.columns(2)
+
+    df = ut.get_data_predict()
+    all_date = pd.unique(df['dt_arquivo'])
+    
+    
+    with col1:
+        dt_min = st.selectbox(label='Data inferior', options=all_date, index=0)
+
+    with col2: 
+        dt_max = st.selectbox(label='Data superior', options=all_date, index=len(all_date)-1)
+
 
     placeholder = st.empty()
 
-    for seconds in range(10000):
+    # for seconds in range(10000):
 
-        df["time_new"] = df["time"] * np.random.choice(range(1, 5))
-        df["amount_new"] = df["amount"] * np.random.choice(range(1, 5))
+    df = ut.get_data_predict()
 
-        # creating KPIs
-        avg_time = np.mean(df["time_new"])
+    money_total = df['amount'].sum()
+    money_fraud = df.loc[df['class'] == 1, 'amount'].sum()
+    money_normal = df.loc[df['class'] == 0, 'amount'].sum()
 
-        count_fraud_amount = int(
-            df[(df["class"] == job_filter)]["amount"].count() + np.random.choice(range(1, 5))
+    # creating KPIs
+    job_filter = 1
+    count_fraud_amount = df[(df["class"] == job_filter)]["amount"].count()
+
+
+    with placeholder.container():
+
+        # create three columns
+        kpi1, kpi2, kpi3 = st.columns(3)
+
+        # fill in those three columns with respective metrics or KPIs
+        kpi1.metric(
+            label="Saldo Negativo",
+            value=f"R$ {round(money_fraud,2)}".replace('.', ','),
+            delta=f'-{round(100*(money_fraud/money_total), 2)}%',
+            delta_color="normal"
+        )
+        
+        kpi2.metric(
+            label="Saldo Positivo",
+            value=f"R$ {round(money_normal,2)}".replace('.', ','),
+            delta=f'{round(100*(money_normal/money_total), 2)}%',
+        )
+        
+        kpi3.metric(
+            label="Saldo Total",
+            value=f"R$ {round(money_total,2)}".replace('.', ',')
         )
 
-        balance = np.mean(df["amount_new"])
+        fig_col1, fig_col2 = st.columns([3, 1])
 
-        with placeholder.container():
-
-            # create three columns
-            kpi1, kpi2, kpi3 = st.columns(3)
-
-            # fill in those three columns with respective metrics or KPIs
-            kpi1.metric(
-                label="Age ⏳",
-                value=round(avg_time),
-                delta=round(avg_time) - 10,
+        with fig_col1:
+            df_tmp = df.groupby(['dt_arquivo', 'class']).agg({'amount':'sum'}).reset_index()
+            fig = px.bar(
+                data_frame=df_tmp,
+                x='dt_arquivo',
+                y='amount',
+                color='class',
+                hover_data={'dt_arquivo':'dd-mm-yyyy'},
+                title="Valores de operações diárias",
+                labels={
+                     "dt_arquivo": "Data",
+                     "amount": "Valor em Reais"
+                 },
+                )
+            fig.update_xaxes(rangeslider_visible=True)
+            fig.update_layout(
+                xaxis=dict(showgrid=False),
+                yaxis=dict(showgrid=False)
             )
+            st.plotly_chart(fig, use_container_width=True)
             
-            kpi2.metric(
-                label="{act} Count".format(act = 'Fraud' if job_filter == 1 else 'Normal'),
-                value=int(count_fraud_amount),
-                delta=-10 + count_fraud_amount,
-            )
-            
-            kpi3.metric(
-                label="A/C Balance ＄",
-                value=f"$ {round(balance,2)} ",
-                delta=-round(balance / count_fraud_amount) * 100,
-            )
+        with fig_col2:
+            st.markdown("Second Chart")
 
-            # create two columns for charts
-            fig_col1, fig_col2 = st.columns(2)
-            with fig_col1:
-                st.markdown("### First Chart")
-                fig = px.density_heatmap(data_frame=df, y="time_new", x="amount_new", width=500, height=300)
-                st.write(fig)
-                
-            with fig_col2:
-                st.markdown("### Second Chart")
-                fig2 = px.histogram(data_frame=df, x="amount_new", width=500, height=300)
-                # st.write(fig2)
-                st.pyplot()
 
-            st.markdown("### Detailed Data View")
-            st.dataframe(df)
-            time.sleep(1)
+        st.subheader('Informações da bases de operações')
+        st.dataframe(df)
+
+        # time.sleep(1)
 
 
 elif opt == 'Dashboard':
