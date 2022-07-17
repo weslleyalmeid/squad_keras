@@ -1,1 +1,1 @@
-web: mlflow ui -p 5000 --host 0.0.0.0
+worker: mlflow ui -p $PORT --host 0.0.0.0
