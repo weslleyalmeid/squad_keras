@@ -8,7 +8,7 @@ services:
     container_name: mlflow
     # command: "mlflow server \
     #         --backend-store-uri sqlite:///mlruns/mlflow.db \
-    #         --default-artifact-root gs://desafio_keras_bucket/mlruns \
+    #         --default-artifact-root ./mlruns/artifacts \
     #         --host 0.0.0.0"
     command: "mlflow server \
         --host 0.0.0.0 \

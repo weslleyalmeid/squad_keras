@@ -61,8 +61,8 @@ class Utils():
                         bigquery.SchemaField('dt_arquivo', bigquery.enums.SqlTypeNames.DATE)
                     ],
                     time_partitioning = bigquery.TimePartitioning(field='dt_arquivo'),
-                    # write_disposition = 'WRITE_APPEND'
-                    write_disposition = 'WRITE_TRUNCATE'
+                    write_disposition = 'WRITE_APPEND'
+                    # write_disposition = 'WRITE_TRUNCATE'
                 )
 
                 table_id = 'keras-356322.credit_fraud.predict'
@@ -99,7 +99,7 @@ class Utils():
         l = len(features)
         aux = []
         for i in range(0,l):
-            print('{:.<20} {:3}'.format(features[i], fi[i]))
+            # print('{:.<20} {:3}'.format(features[i], fi[i]))
             aux.append(features[i])
 
         importances = pd.Series(data=fi, index=aux)
@@ -113,7 +113,12 @@ class Utils():
 
             features = model['features'].str.lower()
             model = model['model']
-            importance = self.check_features(model, features)
+
+            try:
+                importance = self.check_features(model, features)
+            except:
+                importance = self.check_features(model['classify'], features)
+
             return model, features, name, importance
 
 
