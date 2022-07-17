@@ -7,7 +7,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY ./secrets/keras-356322-76c4c7c6a3ee.json ./secrets/keras-356322-76c4c7c6a3ee.json
-COPY ./mlflow_image/Procfile ./Procfile
+COPY ./Procfile ./Procfile
 
 ENV MLFLOW_GCS_DEFAULT_TIMEOUT=-1
 ENV GOOGLE_APPLICATION_CREDENTIALS=./secrets/keras-356322-76c4c7c6a3ee.json
