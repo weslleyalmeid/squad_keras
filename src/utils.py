@@ -4,6 +4,7 @@ import mlflow
 import os.path
 from sqlalchemy import create_engine
 from google.cloud import bigquery
+import streamlit as st
 
 class Utils():
 
@@ -138,7 +139,11 @@ class Utils():
 
     def get_data_predict(self, cloud=True):
         if cloud:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+            try:
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+            except:
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["GCP_CREDENTIALS"]
+
             query = f"""
                 SELECT * FROM `keras-356322.credit_fraud.predict`
             """
