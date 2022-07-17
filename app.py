@@ -87,8 +87,9 @@ elif opt == 'Predict List Data':
                 model, features, name, importance = ut.get_model(text=option.lower(), params=params)
 
                 st.write(importance)
-                ipdb.set_trace()
+                
                 st.write(f'Modelo: {name}')
+
                 y_pred = model.predict(df[features])
                 y_pred_proba = model.predict_proba(df[features])
 
@@ -111,8 +112,6 @@ elif opt == 'Predict List Data':
                 dt = datetime.today().date()
                 df['dt_arquivo'] = dt
 
-                ut.save_db(df)
-
                 st.download_button(
                     label='Download Result',
                     data=df.to_csv(index=False).encode('utf-8'),
@@ -120,6 +119,35 @@ elif opt == 'Predict List Data':
                     mime='text/csv"',
                     key='download-csv'
                 )
+
+                kpi1, kpi2 = st.columns(2)
+
+                count_fraud = df.loc[df['class'] == 1].shape[0]
+                count_normal = df.loc[df['class'] == 0].shape[0]
+                total_operations = df.shape[0]
+
+                kpi1.metric(
+                    label="Quantidade de operações",
+                    value=total_operations
+                )
+
+                kpi1.metric(
+                    label="Quantidade de operações normais",
+                    value=count_normal
+                )
+
+                kpi2.metric(
+                    label="Quantidade de fraude",
+                    value=count_fraud
+                )
+                
+                kpi2.metric(
+                    label="% de operações fraudulentas",
+                    value=f'{round(100*(count_fraud/total_operations), 2)}%'
+                )
+
+                ut.save_db(df)
+
 
     
 
