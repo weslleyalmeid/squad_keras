@@ -26,4 +26,4 @@ VOLUME ./secrets
 ENV BACKEND_URI sqlite:///mlruns/mlflow.db
 ENV ARTIFACTS_DESTINATION gs://desafio_keras_bucket/mlruns/
 
-CMD mlflow server --backend-store-uri ${BACKEND_URI} --serve-artifacts --artifacts-destination ${ARTIFACTS_DESTINATION} --host 0.0.0.0:5000
+CMD mlflow server --backend-store-uri ${BACKEND_URI} --serve-artifacts --artifacts-destination ${ARTIFACTS_DESTINATION} --host 0.0.0.0
