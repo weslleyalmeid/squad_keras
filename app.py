@@ -165,10 +165,6 @@ elif opt == 'KPIs':
 
     placeholder = st.empty()
 
-    # for seconds in range(10000):
-
-    df = ut.get_data_predict()
-
     money_total = df['amount'].sum()
     money_fraud = df.loc[df['class'] == 1, 'amount'].sum()
     money_normal = df.loc[df['class'] == 0, 'amount'].sum()

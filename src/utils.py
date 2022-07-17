@@ -5,6 +5,7 @@ import os.path
 from sqlalchemy import create_engine
 from google.cloud import bigquery
 import streamlit as st
+from google.oauth2 import service_account
 
 class Utils():
 
@@ -21,7 +22,11 @@ class Utils():
     def save_db(self, df, cloud=True):
         if cloud:
             try:
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+                try:
+                    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+                except:
+                    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["GCP_CREDENTIALS"]
+                    
                 client = bigquery.Client()
                 job_config = bigquery.LoadJobConfig(
                     schema = [
@@ -139,15 +144,16 @@ class Utils():
 
     def get_data_predict(self, cloud=True):
         if cloud:
-            try:
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
-            except:
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["GCP_CREDENTIALS"]
-
             query = f"""
                 SELECT * FROM `keras-356322.credit_fraud.predict`
             """
-            return bigquery.Client().query(query).to_dataframe()
-        
+
+            try:
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+                return bigquery.Client().query(query).to_dataframe()
+            except:
+                credentials = service_account.Credentials.from_service_account_info(st.secrets["GCP_CREDENTIALS"]
+                return bigquery.Client(credentials=credentials).query(query).to_dataframe()
+
         return pd.read_sql(sql='SELECT * FROM data_stream', con=self.engine)
         
