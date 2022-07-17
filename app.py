@@ -6,6 +6,7 @@ import ipdb
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
 from src.utils import Utils
@@ -250,7 +251,14 @@ elif opt == 'KPIs':
             st.plotly_chart(fig, use_container_width=True)
             
         with fig_col2:
+            fig = go.Figure(go.Indicator(
+                mode = "gauge+number+delta",
+                value = count_fraud,
+                delta = {'reference': 500, 'increasing': {'color': "red"}},
+                domain = {'x': [0, 1], 'y': [0, 1]},
+                title = {'text': "Fraudes"}))
             st.markdown("Second Chart")
+            st.plotly_chart(fig, use_container_width=True)
 
 
         st.subheader('Informações da bases de operações')
