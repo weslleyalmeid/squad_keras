@@ -7,7 +7,7 @@ from sklearn.metrics import roc_auc_score, recall_score, f1_score
 import mlflow
 import ipdb
 from mlflow.models.signature import infer_signature
-
+from google.cloud import bigquery
 
 MODEL_DIR = os.path.join( os.path.abspath('.') )
 MODEL_DIR = os.path.dirname( os.path.abspath(__file__) )
@@ -15,21 +15,45 @@ SRC_DIR = os.path.dirname(MODEL_DIR)
 ROOT_DIR = os.path.dirname(SRC_DIR)
 MODELS_DIR = os.path.join(ROOT_DIR, 'models')
 DATA_DIR = os.path.join(ROOT_DIR, 'data', '{folder}')
+SECRETS_DIR = os.path.join(ROOT_DIR, 'secrets')
 
+  
+def initial_data(foldername:str, filename:str, cloud=True, first_run=False) -> pd.DataFrame:
 
-def initial_data(foldername:str, filename:str) -> pd.DataFrame:
-    data_file = os.path.join(DATA_DIR.format(folder=foldername), filename)
-    df = pd.read_csv(data_file)
+    if cloud:
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(SECRETS_DIR, 'keras-356322-76c4c7c6a3ee.json')
+        query = f"""
+            SELECT * FROM `keras-356322.credit_fraud.raw_data`
+        """
+        df = bigquery.Client().query(query).to_dataframe()
+        col_float = df.select_dtypes(include=['float64']).columns
+        col_int = df.select_dtypes(include=['int64']).columns
+        df[col_float] = df[col_float].astype('float64')
+        df[col_int] = df[col_int].astype('int64')
+
+    else:
+        data_file = os.path.join(DATA_DIR.format(folder=foldername), filename)
+        df = pd.read_csv(data_file)
+    
     df.columns = df.columns.str.lower()
-
     smote = SMOTE(sampling_strategy=0.4, random_state=42)
 
-    df_fraud = df.loc[df['class'] == 1].sample(5).drop(['class'], axis=1)
-    df_legal = df.loc[df['class'] == 0].sample(5).drop(['class'], axis=1)
+    if first_run:
+        df_fraud = df.loc[df['class'] == 1].sample(2).drop(['class'], axis=1)
+        df_legal = df.loc[df['class'] == 0].sample(998).drop(['class'], axis=1)
 
-    # garantindo dados para teste sem vazamento
-    df.drop(df_fraud.index, axis=0, inplace=True)
-    df.drop(df_legal.index, axis=0, inplace=True)
+
+        df_sample = pd.concat([df_fraud, df_legal], ignore_index=True)
+        filename_aux = os.path.join(DATA_DIR.format(folder='processed'), 'sample.csv')
+        df_sample.to_csv(filename_aux, index=False)
+
+        # garantindo dados para teste sem vazamento
+        df.drop(df_fraud.index, axis=0, inplace=True)
+        df.drop(df_legal.index, axis=0, inplace=True)
+        filename_aux = os.path.join(DATA_DIR.format(folder='external'), 'creditcard.csv')
+        df = df.reset_index(drop=True)
+        df.to_csv(filename_aux, index=False)
+
 
     X = df.drop(labels=['class'], axis=1)
     y = df['class']
@@ -71,7 +95,6 @@ def upgrade_stage(roc_auc, recall, f1, uri, name_registry, name_experiment):
 
 
 def model_registry(roc_auc, recall, f1, name_registry, name_experiment):
-    # ipdb.set_trace()
 
     promoved = upgrade_stage(roc_auc, recall, f1, uri, name_registry, name_experiment)
     if promoved:
@@ -110,7 +133,7 @@ def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_tes
         model = train_model(X_train, y_train)
 
         y_pred = model.predict(X_test)
-        # ipdb.set_trace()
+
         roc_auc = roc_auc_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
@@ -132,8 +155,9 @@ def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_tes
 
 
 if __name__ == '__main__':
-
-    X_train, X_test, y_train, y_test = initial_data(foldername='external', filename='creditcard.csv')
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(SECRETS_DIR, 'keras-356322-76c4c7c6a3ee.json')
+    
+    X_train, X_test, y_train, y_test = initial_data(foldername='external', filename='creditcard.csv', cloud=False, first_run=True)
 
     name_experiment = "fraud_detection"
     uri = "http://172.18.0.2:5000"

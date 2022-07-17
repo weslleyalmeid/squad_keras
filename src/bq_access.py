@@ -13,8 +13,13 @@ from datetime import datetime
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials['env_variables']['SECRET_GCP']
 
 # LEITURA
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(os.path.abspath('.'), 'secrets/keras-356322-76c4c7c6a3ee.json')
 
+
+ROOT_DIR = os.path.dirname(os.path.abspath('.'))
+SEC_DIR = os.path.join(ROOT_DIR, 'secrets/keras-356322-76c4c7c6a3ee.json')
+
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = SEC_DIR
 
 query = f"""
 SELECT * FROM `keras-356322.credit_fraud.raw_data`
@@ -22,6 +27,10 @@ LIMIT 5
 """
 
 df =  bigquery.Client().query(query).to_dataframe()
+ipdb.set_trace()
+df.to_csv('gs://desafio_keras_bucket/file.csv', index=False)
+# gs://<bucket>/<path>
+# gs://desafio_keras_bucket/mlruns
 df['dt_arquivo'] = datetime.today().date()
 
 
