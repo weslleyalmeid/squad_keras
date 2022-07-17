@@ -1,5 +1,7 @@
 FROM python:3.9
 
+LABEL app="Keras_MLFlow" 
+
 ENV VIRTUAL_ENV=.venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -16,18 +18,13 @@ RUN pip3 install --upgrade pip && pip3 install -r requirements-mlflow.txt
 RUN mkdir ./mlruns
 RUN chmod 777 -R ./mlruns
 
-EXPOSE 5000
-EXPOSE 5002
+# EXPOSE 5000
 
 VOLUME ./mlruns
 VOLUME ./secrets
 
 ENV BACKEND_URI sqlite:///mlruns/mlflow.db
 ENV ARTIFACTS_DESTINATION gs://desafio_keras_bucket/mlruns/
-ENV MLFLOW_TRACKING_URI=http://localhost:5000
-
-RUN adduser -D keras
-USER keras
 
 CMD mlflow server --backend-store-uri ${BACKEND_URI} \
     --serve-artifacts --artifacts-destination ${ARTIFACTS_DESTINATION} \

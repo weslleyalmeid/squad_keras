@@ -34,3 +34,8 @@ CMD ["sh","-c","mlflow server --backend-store-uri ${BACKEND_URI} \
     ]
 
 
+heroku container:push web --recursive --app keras-fraud-detection
+
+heroku container:release web --app keras-fraud-detection
+
+heroku open --app keras-fraud-detection
