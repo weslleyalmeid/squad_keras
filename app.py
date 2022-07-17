@@ -12,12 +12,6 @@ from src.utils import Utils
 
 ut = Utils()
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(ROOT_DIR, 'data', '{folder}')
-data_file = os.path.join(DATA_DIR.format(folder='external'), 'creditcard.csv')
-df = pd.read_csv(data_file)
-df.columns = df.columns.str.lower()
-
 st.set_page_config(
     page_title="Real-Time Data Science Dashboard",
     page_icon="🤖",
