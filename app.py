@@ -84,8 +84,10 @@ elif opt == 'Predict List Data':
                     'name_experiment': 'fraud_detection'
                 }
 
-                model, features, name = ut.get_model(text=option.lower(), params=params)
+                model, features, name, importance = ut.get_model(text=option.lower(), params=params)
 
+                st.write(importance)
+                ipdb.set_trace()
                 st.write(f'Modelo: {name}')
                 y_pred = model.predict(df[features])
                 y_pred_proba = model.predict_proba(df[features])
@@ -104,7 +106,7 @@ elif opt == 'Predict List Data':
 
                 st.dataframe(df)
 
-                df['Model'] = name
+                df['model'] = name
 
                 dt = datetime.today().date()
                 df['dt_arquivo'] = dt
@@ -149,6 +151,10 @@ elif opt == 'KPIs':
     money_fraud = df.loc[df['class'] == 1, 'amount'].sum()
     money_normal = df.loc[df['class'] == 0, 'amount'].sum()
 
+    count_fraud = df.loc[df['class'] == 1].shape[0]
+    count_normal = df.loc[df['class'] == 0].shape[0]
+    total_operations = df.shape[0]
+
     # creating KPIs
     job_filter = 1
     count_fraud_amount = df[(df["class"] == job_filter)]["amount"].count()
@@ -157,27 +163,51 @@ elif opt == 'KPIs':
     with placeholder.container():
 
         # create three columns
-        kpi1, kpi2, kpi3 = st.columns(3)
+        kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
         # fill in those three columns with respective metrics or KPIs
         kpi1.metric(
-            label="Saldo Negativo",
-            value=f"R$ {round(money_fraud,2)}".replace('.', ','),
-            delta=f'-{round(100*(money_fraud/money_total), 2)}%',
-            delta_color="normal"
+            label="R$ fraude detectada",
+            value=f"R$ {round(money_fraud,2)}".replace('.', ',')
         )
         
         kpi2.metric(
-            label="Saldo Positivo",
-            value=f"R$ {round(money_normal,2)}".replace('.', ','),
-            delta=f'{round(100*(money_normal/money_total), 2)}%',
+            label="R$ operação normal",
+            value=f"R$ {round(money_normal,2)}".replace('.', ',')
         )
         
         kpi3.metric(
-            label="Saldo Total",
+            label="R$ Total avaliado",
             value=f"R$ {round(money_total,2)}".replace('.', ',')
         )
 
+        kpi4.metric(
+            label="Faturamento para 0.5%",
+            value=f"R$ {round(money_total*0.05,2)}".replace('.', ',')
+        )
+
+        kpi5, kpi6, kpi7, kpi8 = st.columns(4)
+
+        kpi5.metric(
+            label="% de fraude em R$",
+            value=f'{round(100*(money_fraud/money_total), 2)}%'
+        )
+
+        kpi6.metric(
+            label="Quantidade de operações",
+            value=total_operations
+        )
+
+        kpi7.metric(
+            label="Quantidade de fraude",
+            value=count_fraud
+        )
+        
+        kpi8.metric(
+            label="% de operações fraudulentas",
+            value=f'{round(100*(count_fraud/total_operations), 2)}%'
+        )
+        
         fig_col1, fig_col2 = st.columns([3, 1])
 
         with fig_col1:
