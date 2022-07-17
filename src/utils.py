@@ -152,7 +152,7 @@ class Utils():
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
                 return bigquery.Client().query(query).to_dataframe()
             except:
-                credentials = service_account.Credentials.from_service_account_info(st.secrets["GCP_CREDENTIALS"]
+                credentials = service_account.Credentials.from_service_account_info(st.secrets["GCP_CREDENTIALS"])
                 return bigquery.Client(credentials=credentials).query(query).to_dataframe()
 
         return pd.read_sql(sql='SELECT * FROM data_stream', con=self.engine)
