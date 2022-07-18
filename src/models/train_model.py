@@ -160,7 +160,8 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = initial_data(foldername='external', filename='creditcard.csv', cloud=False, first_run=True)
 
     name_experiment = "fraud_detection"
-    uri = "http://172.18.0.2:5000"
+    # uri = "http://172.18.0.2:5000"
+    uri = "https://keras-fraud-detection.herokuapp.com/"
     model_name = 'clf'
 
     roc_auc, recall, f1, name_registry = mlflow_tracking(name_experiment, uri, model_name, X_train, X_test, y_train, y_test)

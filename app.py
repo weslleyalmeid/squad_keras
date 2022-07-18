@@ -74,7 +74,8 @@ elif opt == 'Predict List Data':
 
             if option != 'Nenhum':
                 params = {
-                    'uri': 'http://172.18.0.2:5000/',
+                    # 'uri': 'http://172.18.0.2:5000/',
+                    'uri': "https://keras-fraud-detection.herokuapp.com/",
                     'name_registry': 'model_clf',
                     'name_experiment': 'fraud_detection'
                 }
