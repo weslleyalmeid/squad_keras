@@ -20,14 +20,28 @@ class Utils():
         self.engine = create_engine(f'sqlite:///{self.DB_DIR}', echo=False)
 
     def save_db(self, df, cloud=True):
+        """
+        Persiste as informações no banco de dados local com sqlite ou cloud
+
+        Parameters:
+        ------------
+        df (dataframe): arquivo base para popular a tabela em formato dataframe
+        cloud (bool): salvar na cloud ou em ambiente local
+
+        Returns:
+        --------
+        Sem retorno
+        """
         if cloud:
             try:
                 try:
                     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(self.SECRETS, 'keras-356322-76c4c7c6a3ee.json')
+                    client = bigquery.Client()
                 except:
-                    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["GCP_CREDENTIALS"]
+                    credentials = service_account.Credentials.from_service_account_info(st.secrets["GCP_CREDENTIALS"])
+                    client = bigquery.Client(credentials=credentials)
                     
-                client = bigquery.Client()
+                
                 job_config = bigquery.LoadJobConfig(
                     schema = [
                         bigquery.SchemaField('class','int64'),
@@ -90,6 +104,17 @@ class Utils():
                 print('Error')
 
     def read_file(self, file):
+        """
+        Leitura de arquivo csv/xlsx
+
+        Parameters:
+        ------------
+        file (csv | xls): arquivo de input em formato csv ou xls
+
+        Returns:
+        --------
+        df (dataframe): dataframe contendo as informações de input
+        """
         try:
             df = pd.read_csv(file)
             df.columns = df.columns.str.lower()
@@ -105,13 +130,27 @@ class Utils():
         l = len(features)
         aux = []
         for i in range(0,l):
-            # print('{:.<20} {:3}'.format(features[i], fi[i]))
             aux.append(features[i])
 
         importances = pd.Series(data=fi, index=aux)
         return importances.sort_values(ascending=False)
 
     def get_model(self, text:str, params:dict):
+        """
+        Obter o modelo de aprendizado de máquina.
+
+        Parameters:
+        ------------
+        text (str): string contendo qual modelo buscar [local ou remoto]
+        params (dict): argumentos para buscar modelo remoto do mlflow
+
+        Returns:
+        --------
+        model (scikit-learn): binário do modelo
+        features (str): features utilizadas no treinamento do modelo
+        name (str): Local ou MLFlow
+        importance (str): features detectadas com mais importância pelo modelo
+        """
 
         if 'local' in text:
             name = 'Local'
@@ -143,6 +182,17 @@ class Utils():
             return model, features, name, importance
 
     def get_data_predict(self, cloud=True):
+        """
+        Obter dados das predições dos modelos
+
+        Parameters:
+        ------------
+        cloud (bool): argumento para buscar dados na cloud ou local
+
+        Returns:
+        --------
+        df (datafrme): resposta da consulta
+        """
         if cloud:
             query = f"""
                 SELECT * FROM `keras-356322.credit_fraud.predict`

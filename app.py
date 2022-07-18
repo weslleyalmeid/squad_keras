@@ -1,6 +1,6 @@
 import os.path
 import time
-from datetime import datetime
+from datetime import datetime, date
 
 import ipdb
 import numpy as np
@@ -30,18 +30,22 @@ opt = st.sidebar.radio('Selecione um opção', options=option)
 
 
 if opt == 'Sobre':
-    number = st.number_input('Page number', min_value=1, max_value=3)
+    number = st.number_input('Page number', min_value=1, max_value=2)
     if number == 1:
-        st.write('The current number is ', number)
-        st.title('title')
-        st.subheader('subheader')
-        st.write('write')
-        st.markdown('markdown')
+        st.title('Detecção de fraudes em cartões de crédito')
+        st.subheader('Engenharia de Dados')
+        st.write('[Bianca de Moura Pasetto](https://www.linkedin.com/in/biancamk)')
+        st.write('[Enzo  Niro]()')
+
+        st.subheader('Ciência de Dados')
+        st.write('[Marco Craveiro](https://www.linkedin.com/in/marco-craveiro-ab577310)')
+        st.markdown('[Weslley Almeida](https://www.linkedin.com/in/weslleyalmeid)')
+        
 
     elif number == 2:
-        st.write('The current number is ', number)
-    elif number == 3:
-        st.write('The current number is ', number)
+        st.write('### [Repo github](https://github.com/weslleyalmeid/squad_keras)')
+        st.write('### [Apresentação](https://docs.google.com/presentation/d/19ZaNbDVx2X4GQsaP2_BChKiQ6bpxSTDV/edit?usp=sharing&ouid=100868357269049707274&rtpof=true&sd=true)')
+
 
 
 elif opt == 'Predict List Data':
@@ -81,9 +85,7 @@ elif opt == 'Predict List Data':
                 }
 
                 model, features, name, importance = ut.get_model(text=option.lower(), params=params)
-
-                st.write(importance)
-                
+           
                 st.write(f'Modelo: {name}')
 
                 y_pred = model.predict(df[features])
@@ -100,8 +102,6 @@ elif opt == 'Predict List Data':
 
                 col = df.pop('class')
                 df.insert(0, col.name, col)
-
-                st.dataframe(df)
 
                 df['model'] = name
 
@@ -141,6 +141,12 @@ elif opt == 'Predict List Data':
                     label="% de operações fraudulentas",
                     value=f'{round(100*(count_fraud/total_operations), 2)}%'
                 )
+                
+                col3, col4 = st.columns([3, 1])
+                with col3:
+                    st.dataframe(df)
+                with col4:
+                    st.code(importance)
 
                 ut.save_db(df)
 
@@ -155,7 +161,7 @@ elif opt == 'KPIs':
     col1, col2 = st.columns(2)
 
     df = ut.get_data_predict()
-    all_date = pd.unique(df['dt_arquivo'])
+    all_date = pd.unique(df['dt_arquivo'].sort_values())
     
     
     with col1:
@@ -264,8 +270,6 @@ elif opt == 'KPIs':
 
         st.subheader('Informações da bases de operações')
         st.dataframe(df)
-
-        # time.sleep(1)
 
 
 elif opt == 'Dashboard':
