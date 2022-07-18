@@ -7,11 +7,15 @@ Projeto desenvolvido como resolução do desafio proposto pela equipe do [Stack 
 ## Integrantes
 
 **Engenharia de Dados**
+
 [Bianca de Moura Pasetto](https://www.linkedin.com/in/biancamk)
+
 [Enzo  Niro](https://www.linkedin.com/in/enzo-niro-59a11537)
 
 **Ciência de Dados**
+
 [Marco Craveiro](https://www.linkedin.com/in/marco-craveiro-ab577310)
+
 [Weslley Almeida](https://www.linkedin.com/in/weslleyalmeid)
 
 ## Etapas de desenvolvimento
@@ -138,6 +142,8 @@ Vale ressaltar que o Heroku requer nomes padrões para os dockerfiles, por padr�
 ## Link do deploy
 
 [Data APP - Fraud Detection](https://weslleyalmeid-squad-keras-app-560pwk.streamlitapp.com/)
+
+[Dados test](https://github.com/weslleyalmeid/squad_keras/tree/main/data_test)
 
 ## Estrutura dos diretórios
 ------------
