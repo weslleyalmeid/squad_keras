@@ -19,6 +19,7 @@ class Utils():
 
         self.engine = create_engine(f'sqlite:///{self.DB_DIR}', echo=False)
 
+
     def save_db(self, df, cloud=True):
         """
         Persiste as informações no banco de dados local com sqlite ou cloud
@@ -32,6 +33,7 @@ class Utils():
         --------
         Sem retorno
         """
+        
         if cloud:
             try:
                 try:
@@ -103,6 +105,7 @@ class Utils():
             except:
                 print('Error')
 
+
     def read_file(self, file):
         """
         Leitura de arquivo csv/xlsx
@@ -125,6 +128,7 @@ class Utils():
             df.columns = df.columns.str.lower()
             return df
 
+
     def check_features(self, model, features):
         fi = model.feature_importances_
         l = len(features)
@@ -134,6 +138,7 @@ class Utils():
 
         importances = pd.Series(data=fi, index=aux)
         return importances.sort_values(ascending=False)
+
 
     def get_model(self, text:str, params:dict):
         """
@@ -180,6 +185,7 @@ class Utils():
             features = model.feature_names_in_
             importance = self.check_features(model, features)
             return model, features, name, importance
+
 
     def get_data_predict(self, cloud=True):
         """

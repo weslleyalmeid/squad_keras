@@ -35,7 +35,7 @@ if opt == 'Sobre':
         st.title('Detecção de fraudes em cartões de crédito')
         st.subheader('Engenharia de Dados')
         st.write('[Bianca de Moura Pasetto](https://www.linkedin.com/in/biancamk)')
-        st.write('[Enzo  Niro]()')
+        st.write('[Enzo  Niro](https://www.linkedin.com/in/enzo-niro-59a11537)')
 
         st.subheader('Ciência de Dados')
         st.write('[Marco Craveiro](https://www.linkedin.com/in/marco-craveiro-ab577310)')
@@ -171,6 +171,8 @@ elif opt == 'KPIs':
         dt_max = st.selectbox(label='Data superior', options=all_date, index=len(all_date)-1)
 
 
+
+    df = df.loc[df['dt_arquivo'].between(dt_min, dt_max)]
     placeholder = st.empty()
 
     money_total = df['amount'].sum()
