@@ -157,7 +157,7 @@ def mlflow_tracking(name_experiment:str, uri:str, model_name:str, X_train, X_tes
 if __name__ == '__main__':
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.join(SECRETS_DIR, 'keras-356322-76c4c7c6a3ee.json')
     
-    X_train, X_test, y_train, y_test = initial_data(foldername='external', filename='creditcard.csv', cloud=False, first_run=True)
+    X_train, X_test, y_train, y_test = initial_data(foldername='external', filename='creditcard.csv', cloud=False, first_run=False)
 
     name_experiment = "fraud_detection"
     # uri = "http://172.18.0.2:5000"

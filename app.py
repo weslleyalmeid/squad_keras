@@ -39,7 +39,7 @@ if opt == 'Sobre':
 
         st.subheader('Ciência de Dados')
         st.write('[Marco Craveiro](https://www.linkedin.com/in/marco-craveiro-ab577310)')
-        st.markdown('[Weslley Almeida](https://www.linkedin.com/in/weslleyalmeid)')
+        st.write('[Weslley Almeida](https://www.linkedin.com/in/weslleyalmeid)')
         
 
     elif number == 2:
