@@ -171,107 +171,107 @@ elif opt == 'KPIs':
         dt_max = st.selectbox(label='Data superior', options=all_date, index=len(all_date)-1)
 
 
+    if dt_min <= dt_max:
+        df = df.loc[df['dt_arquivo'].between(dt_min, dt_max)]
+        placeholder = st.empty()
 
-    df = df.loc[df['dt_arquivo'].between(dt_min, dt_max)]
-    placeholder = st.empty()
+        money_total = df['amount'].sum()
+        money_fraud = df.loc[df['class'] == 1, 'amount'].sum()
+        money_normal = df.loc[df['class'] == 0, 'amount'].sum()
 
-    money_total = df['amount'].sum()
-    money_fraud = df.loc[df['class'] == 1, 'amount'].sum()
-    money_normal = df.loc[df['class'] == 0, 'amount'].sum()
+        count_fraud = df.loc[df['class'] == 1].shape[0]
+        count_normal = df.loc[df['class'] == 0].shape[0]
+        total_operations = df.shape[0]
 
-    count_fraud = df.loc[df['class'] == 1].shape[0]
-    count_normal = df.loc[df['class'] == 0].shape[0]
-    total_operations = df.shape[0]
-
-    # creating KPIs
-    job_filter = 1
-    count_fraud_amount = df[(df["class"] == job_filter)]["amount"].count()
+        # creating KPIs
+        job_filter = 1
+        count_fraud_amount = df[(df["class"] == job_filter)]["amount"].count()
 
 
-    with placeholder.container():
+        with placeholder.container():
 
-        # create three columns
-        kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+            # create three columns
+            kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
-        # fill in those three columns with respective metrics or KPIs
-        kpi1.metric(
-            label="R$ fraude detectada",
-            value=f"R$ {round(money_fraud,2)}".replace('.', ',')
-        )
-        
-        kpi2.metric(
-            label="R$ operação normal",
-            value=f"R$ {round(money_normal,2)}".replace('.', ',')
-        )
-        
-        kpi3.metric(
-            label="R$ Total avaliado",
-            value=f"R$ {round(money_total,2)}".replace('.', ',')
-        )
-
-        kpi4.metric(
-            label="Faturamento para 0.5%",
-            value=f"R$ {round(money_total*0.05,2)}".replace('.', ',')
-        )
-
-        kpi5, kpi6, kpi7, kpi8 = st.columns(4)
-
-        kpi5.metric(
-            label="% de fraude em R$",
-            value=f'{round(100*(money_fraud/money_total), 2)}%'
-        )
-
-        kpi6.metric(
-            label="Quantidade de operações",
-            value=total_operations
-        )
-
-        kpi7.metric(
-            label="Quantidade de fraude",
-            value=count_fraud
-        )
-        
-        kpi8.metric(
-            label="% de operações fraudulentas",
-            value=f'{round(100*(count_fraud/total_operations), 2)}%'
-        )
-        
-        fig_col1, fig_col2 = st.columns([3, 1])
-
-        with fig_col1:
-            df_tmp = df.groupby(['dt_arquivo', 'class']).agg({'amount':'sum'}).reset_index()
-            fig = px.bar(
-                data_frame=df_tmp,
-                x='dt_arquivo',
-                y='amount',
-                color='class',
-                hover_data={'dt_arquivo':'dd-mm-yyyy'},
-                title="Valores de operações diárias",
-                labels={
-                     "dt_arquivo": "Data",
-                     "amount": "Valor em Reais"
-                 },
-                )
-            fig.update_xaxes(rangeslider_visible=True)
-            fig.update_layout(
-                xaxis=dict(showgrid=False),
-                yaxis=dict(showgrid=False)
+            # fill in those three columns with respective metrics or KPIs
+            kpi1.metric(
+                label="R$ fraude detectada",
+                value=f"R$ {round(money_fraud,2)}".replace('.', ',')
             )
-            st.plotly_chart(fig, use_container_width=True)
             
-        with fig_col2:
-            fig = go.Figure(go.Indicator(
-                mode = "gauge+number+delta",
-                value = count_fraud,
-                delta = {'reference': 500, 'increasing': {'color': "red"}},
-                domain = {'x': [0, 1], 'y': [0, 1]},
-                title = {'text': "Fraudes"}))
-            st.markdown("Second Chart")
-            st.plotly_chart(fig, use_container_width=True)
+            kpi2.metric(
+                label="R$ operação normal",
+                value=f"R$ {round(money_normal,2)}".replace('.', ',')
+            )
+            
+            kpi3.metric(
+                label="R$ Total avaliado",
+                value=f"R$ {round(money_total,2)}".replace('.', ',')
+            )
+
+            kpi4.metric(
+                label="Faturamento para 0.5%",
+                value=f"R$ {round(money_total*0.05,2)}".replace('.', ',')
+            )
+
+            kpi5, kpi6, kpi7, kpi8 = st.columns(4)
+
+            kpi5.metric(
+                label="% de fraude em R$",
+                value=f'{round(100*(money_fraud/money_total), 2)}%'
+            )
+
+            kpi6.metric(
+                label="Quantidade de operações",
+                value=total_operations
+            )
+
+            kpi7.metric(
+                label="Quantidade de fraude",
+                value=count_fraud
+            )
+            
+            kpi8.metric(
+                label="% de operações fraudulentas",
+                value=f'{round(100*(count_fraud/total_operations), 2)}%'
+            )
+            
+            fig_col1, fig_col2 = st.columns([3, 1])
+
+            with fig_col1:
+                df_tmp = df.groupby(['dt_arquivo', 'class']).agg({'amount':'sum'}).reset_index()
+                fig = px.bar(
+                    data_frame=df_tmp,
+                    x='dt_arquivo',
+                    y='amount',
+                    color='class',
+                    hover_data={'dt_arquivo':'dd-mm-yyyy'},
+                    title="Valores de operações diárias",
+                    labels={
+                        "dt_arquivo": "Data",
+                        "amount": "Valor em Reais"
+                    },
+                    )
+                fig.update_xaxes(rangeslider_visible=True)
+                fig.update_layout(
+                    xaxis=dict(showgrid=False),
+                    yaxis=dict(showgrid=False)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                
+            with fig_col2:
+                fig = go.Figure(go.Indicator(
+                    mode = "gauge+number+delta",
+                    value = count_fraud,
+                    delta = {'reference': 500, 'increasing': {'color': "red"}},
+                    domain = {'x': [0, 1], 'y': [0, 1]},
+                    title = {'text': "Fraudes"}))
+                st.markdown("Second Chart")
+                st.plotly_chart(fig, use_container_width=True)
 
 
-        st.subheader('Informações da bases de operações')
-        st.dataframe(df)
+            st.subheader('Informações da bases de operações')
+            st.dataframe(df)
 
 
 elif opt == 'Dashboard':
