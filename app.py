@@ -171,6 +171,8 @@ elif opt == 'KPIs':
         dt_max = st.selectbox(label='Data superior', options=all_date, index=len(all_date)-1)
 
 
+
+    df = df.loc[df['dt_arquivo'].between(dt_min, dt_max)]
     placeholder = st.empty()
 
     money_total = df['amount'].sum()
