@@ -145,6 +145,8 @@ Vale ressaltar que o Heroku requer nomes padrões para os dockerfiles, por padr�
 
 [Dados test](https://github.com/weslleyalmeid/squad_keras/tree/main/data_test)
 
+[Demo - Squad Keras [Stack Labs 2022.2] - Credit Card Fraud Detection](https://youtu.be/-Rs4DqrCFvU)
+
 ## Estrutura dos diretórios
 ------------
 
